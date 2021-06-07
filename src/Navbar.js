@@ -7,7 +7,6 @@ const Navbar = () => {
         <nav className="Navbar">
             <NavLink exact to="/">Jobly</NavLink>
             <NavLink exact to="/companies">Companies</NavLink>
-            <NavLink exact to="/companies/apple"> Specific Company</NavLink>
             <NavLink exact to="/jobs">Jobs</NavLink>
             <NavLink exact to="/login" id='push'>Log In</NavLink>
             <NavLink exact to="/signup">Sign Up</NavLink>
