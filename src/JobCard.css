@@ -1,0 +1,25 @@
+.JobCard {
+    
+        display: flex;
+        justify-content: center;
+        margin: 0 auto;
+        margin-top: 30px;
+        
+}
+
+.btnDiv {
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-end;
+    
+  
+}
+
+.btnDiv button {
+    margin-right: 20px;
+    margin-bottom: 20px;
+}
+
+.card-body {
+    margin-left: 50px;
+}

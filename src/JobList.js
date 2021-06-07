@@ -1,9 +1,12 @@
 import React from 'react';
+import JobSearch from './JobSearch';
+import JobCard from './JobCard';
 
-const JobList = () => {
+const JobList = ({ jobs, search }) => {
     return (
         <div className='JobList'>
-            <h1>I'm the JobList</h1>
+            <JobSearch search={search} />
+            {jobs.map(job => <JobCard key={job.id} job={job} />)}
         </div>
     )
 }

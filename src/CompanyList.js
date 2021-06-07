@@ -1,25 +1,9 @@
-import React, { useEffect, useState } from 'react';
-import JoblyApi from './api/api';
+import React from 'react';
 import CompanySearch from './CompanySearch';
 import CompanyCard from './CompanyCard';
 
-const CompanyList = () => {
-    let [companies, setCompanies] = useState([]);
+const CompanyList = ({ companies, search }) => {
 
-    async function search(name) {
-        let companies;
-        if (name !== '') {
-            companies = await JoblyApi.getCompanies(name);
-        } else {
-            companies = await JoblyApi.getCompanies();
-        }
-
-        setCompanies(companies);
-    }
-
-    useEffect(() => {
-        search();
-    }, []);
 
 
     return (
