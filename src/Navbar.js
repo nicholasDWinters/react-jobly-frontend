@@ -4,7 +4,7 @@ import './Navbar.css';
 import UserContext from './UserContext';
 
 const Navbar = ({ logout }) => {
-    let user = useContext(UserContext);
+    let { user, setUser } = useContext(UserContext);
     return (
         <nav className="Navbar">
             <NavLink exact to="/">Jobly</NavLink>

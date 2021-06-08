@@ -13,6 +13,7 @@ import Home from './Home';
 import UserContext from './UserContext';
 import ErrorContext from './ErrorContext';
 import Error from './Errors';
+import jwt from 'jsonwebtoken';
 
 function App() {
   let [companies, setCompanies] = useState([]);
@@ -27,7 +28,6 @@ function App() {
       let token = await JoblyApi.signup(data);
       setUser(data);
       setToken(token);
-      JoblyApi.token = token;
       localStorage.setItem('token', token);
       localStorage.setItem('user', JSON.stringify(user));
       setErrors([]);
@@ -41,7 +41,6 @@ function App() {
     try {
       let token = await JoblyApi.login(data);
       setToken(token);
-      JoblyApi.token = token;
       localStorage.setItem('token', token);
       setUser(data);
       setErrors([]);
@@ -52,6 +51,19 @@ function App() {
 
   }
 
+  async function updateUser(data, creds) {
+    try {
+      const newData = { firstName: data.firstName, lastName: data.lastName, email: data.email };
+      await JoblyApi.updateUser(user.username, newData);
+      let token = await JoblyApi.login(creds);
+      setToken(token);
+      setErrors([]);
+      history.push('/companies');
+    } catch (e) {
+      setErrors(e);
+    }
+  }
+
   function logout() {
     localStorage.clear();
     setUser({});
@@ -60,7 +72,7 @@ function App() {
   }
 
   function getUserFromLocalStorage() {
-    if (localStorage.user) setUser(JSON.parse(localStorage.user));
+    // if (localStorage.user) setUser(JSON.parse(localStorage.user));
     if (localStorage.token) setToken(localStorage.token);
   }
 
@@ -96,20 +108,27 @@ function App() {
 
   useEffect(() => {
     async function findUser() {
-      if (user.username) {
+      if (token) {
+        try {
+          let { username } = jwt.decode(token);
+          JoblyApi.token = token;
+          let current = await JoblyApi.getCurrentUser(username);
+          setUser(current);
+          localStorage.setItem('user', JSON.stringify(current));
+        } catch (e) {
+          setErrors(e);
+          setUser(null)
+        }
 
-        let current = await JoblyApi.getCurrentUser(user.username);
-        setUser(current);
-        localStorage.setItem('user', JSON.stringify(current));
       }
     }
     findUser();
-  }, [token, user.username]);
+  }, [token]);
 
 
   return (
     <div className="App">
-      <UserContext.Provider value={user}>
+      <UserContext.Provider value={{ user, setUser }}>
         <ErrorContext.Provider value={{ errors, setErrors }}>
           <Navbar logout={logout} />
           {errors.length ? <Error error={errors} /> : ''}
@@ -119,7 +138,7 @@ function App() {
             <Route exact path='/jobs'><JobList jobs={jobs} search={searchJobs} /></Route>
             <Route exact path='/login'><LoginForm login={login} /></Route>
             <Route exact path='/signup'><SignupForm signup={signup} /></Route>
-            <Route exact path='/profile'><Profile /></Route>
+            <Route exact path='/profile'><Profile updateUser={updateUser} /></Route>
             <Route exact path='/'><Home /></Route>
             <Redirect to='/' />
           </Switch>
