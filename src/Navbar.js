@@ -1,16 +1,20 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { NavLink } from 'react-router-dom';
 import './Navbar.css';
+import UserContext from './UserContext';
 
-const Navbar = () => {
+const Navbar = ({ logout }) => {
+    let user = useContext(UserContext);
     return (
         <nav className="Navbar">
             <NavLink exact to="/">Jobly</NavLink>
-            <NavLink exact to="/companies">Companies</NavLink>
-            <NavLink exact to="/jobs">Jobs</NavLink>
-            <NavLink exact to="/login" id='push'>Log In</NavLink>
-            <NavLink exact to="/signup">Sign Up</NavLink>
-            <NavLink exact to="/profile">Profile</NavLink>
+            { localStorage.token ? <NavLink exact to="/companies">Companies</NavLink> : ''}
+
+            { localStorage.token ? <NavLink exact to="/jobs">Jobs</NavLink> : ''}
+            { localStorage.token ? <NavLink exact to="/profile" id='push'>{user.firstName}'s Profile</NavLink> : ''}
+
+            {!localStorage.token ? <NavLink exact to="/login" id='push'>Log In</NavLink> : <button style={{ background: 'none', border: 'none' }} onClick={logout}>Log Out</button>}
+            {!localStorage.token ? <NavLink exact to="/signup">Sign Up</NavLink> : ''}
         </nav>
 
     )
