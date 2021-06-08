@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
-import { useHistory } from 'react-router-dom';
+import React, { useContext, useState } from 'react';
+
 import './AuthForm.css';
+import ErrorContext from './ErrorContext';
 
 const SignupForm = ({ signup }) => {
     let initial = {
@@ -12,7 +13,9 @@ const SignupForm = ({ signup }) => {
     }
 
     let [data, setData] = useState(initial);
-    let history = useHistory();
+
+    let { errors } = useContext(ErrorContext);
+
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -20,13 +23,14 @@ const SignupForm = ({ signup }) => {
             ...data,
             [name]: value
         }))
+
     }
 
     const handleSubmit = evt => {
         evt.preventDefault();
         signup(data);
-        setData(initial);
-        history.push('/companies');
+        if (errors === '') setData(initial);
+
     };
 
 

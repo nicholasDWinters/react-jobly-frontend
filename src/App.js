@@ -11,6 +11,8 @@ import SignupForm from './SignupForm';
 import Profile from './Profile';
 import Home from './Home';
 import UserContext from './UserContext';
+import ErrorContext from './ErrorContext';
+import Error from './Errors';
 
 function App() {
   let [companies, setCompanies] = useState([]);
@@ -18,23 +20,36 @@ function App() {
   let [user, setUser] = useState({});
   let [token, setToken] = useState('');
   let history = useHistory();
-
+  let [errors, setErrors] = useState([]);
 
   async function signup(data) {
-    let token = await JoblyApi.signup(data);
-    setUser(data);
-    setToken(token);
-    JoblyApi.token = token;
-    localStorage.setItem('token', token);
-    localStorage.setItem('user', JSON.stringify(user));
+    try {
+      let token = await JoblyApi.signup(data);
+      setUser(data);
+      setToken(token);
+      JoblyApi.token = token;
+      localStorage.setItem('token', token);
+      localStorage.setItem('user', JSON.stringify(user));
+      setErrors([]);
+      history.push('/companies');
+    } catch (e) {
+      setErrors(...e);
+    }
   }
 
   async function login(data) {
-    let token = await JoblyApi.login(data);
-    setToken(token);
-    JoblyApi.token = token;
-    localStorage.setItem('token', token);
-    setUser(data);
+    try {
+      let token = await JoblyApi.login(data);
+      setToken(token);
+      JoblyApi.token = token;
+      localStorage.setItem('token', token);
+      setUser(data);
+      setErrors([]);
+      history.push('/companies');
+    } catch (e) {
+      setErrors(...e);
+    }
+
   }
 
   function logout() {
@@ -76,6 +91,7 @@ function App() {
     getUserFromLocalStorage();
     searchCompanies();
     searchJobs();
+    setErrors([]);
   }, []);
 
   useEffect(() => {
@@ -94,17 +110,20 @@ function App() {
   return (
     <div className="App">
       <UserContext.Provider value={user}>
-        <Navbar logout={logout} />
-        <Switch>
-          <Route exact path='/companies/:handle'><CompanyDetails /></Route>
-          <Route exact path='/companies'><CompanyList companies={companies} search={searchCompanies} /></Route>
-          <Route exact path='/jobs'><JobList jobs={jobs} search={searchJobs} /></Route>
-          <Route exact path='/login'><LoginForm login={login} /></Route>
-          <Route exact path='/signup'><SignupForm signup={signup} /></Route>
-          <Route exact path='/profile'><Profile /></Route>
-          <Route exact path='/'><Home /></Route>
-          <Redirect to='/' />
-        </Switch>
+        <ErrorContext.Provider value={{ errors, setErrors }}>
+          <Navbar logout={logout} />
+          {errors.length ? <Error error={errors} /> : ''}
+          <Switch>
+            <Route exact path='/companies/:handle'><CompanyDetails /></Route>
+            <Route exact path='/companies'><CompanyList companies={companies} search={searchCompanies} /></Route>
+            <Route exact path='/jobs'><JobList jobs={jobs} search={searchJobs} /></Route>
+            <Route exact path='/login'><LoginForm login={login} /></Route>
+            <Route exact path='/signup'><SignupForm signup={signup} /></Route>
+            <Route exact path='/profile'><Profile /></Route>
+            <Route exact path='/'><Home /></Route>
+            <Redirect to='/' />
+          </Switch>
+        </ErrorContext.Provider>
       </UserContext.Provider>
     </div>
   );

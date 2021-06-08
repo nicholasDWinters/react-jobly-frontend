@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { useHistory } from 'react-router-dom';
 import './AuthForm.css';
+
 
 const LoginForm = ({ login }) => {
     let initial = {
@@ -10,7 +10,7 @@ const LoginForm = ({ login }) => {
     }
 
     let [data, setData] = useState(initial);
-    let history = useHistory();
+
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -24,7 +24,7 @@ const LoginForm = ({ login }) => {
         evt.preventDefault();
         login(data);
         setData(initial);
-        history.push('/companies');
+
     };
 
 
