@@ -20,8 +20,9 @@ function App() {
   let [jobs, setJobs] = useState([]);
   let [user, setUser] = useState({});
   let [token, setToken] = useState('');
-  let history = useHistory();
   let [errors, setErrors] = useState([]);
+  let [applications, setApplications] = useState([]);
+  let history = useHistory();
 
   async function signup(data) {
     try {
@@ -98,6 +99,16 @@ function App() {
     setJobs(jobs);
   }
 
+  async function apply(username, id) {
+    try {
+      await JoblyApi.applyToJob(username, id);
+      setApplications(...applications, id);
+      setUser(user);
+    } catch (e) {
+      setErrors(e);
+    }
+  }
+
 
   useEffect(() => {
     getUserFromLocalStorage();
@@ -133,9 +144,9 @@ function App() {
           <Navbar logout={logout} />
           {errors.length ? <Error error={errors} /> : ''}
           <Switch>
-            <Route exact path='/companies/:handle'><CompanyDetails /></Route>
+            <Route exact path='/companies/:handle'><CompanyDetails apply={apply} applications={applications} /></Route>
             <Route exact path='/companies'><CompanyList companies={companies} search={searchCompanies} /></Route>
-            <Route exact path='/jobs'><JobList jobs={jobs} search={searchJobs} /></Route>
+            <Route exact path='/jobs'><JobList jobs={jobs} search={searchJobs} apply={apply} applications={applications} /></Route>
             <Route exact path='/login'><LoginForm login={login} /></Route>
             <Route exact path='/signup'><SignupForm signup={signup} /></Route>
             <Route exact path='/profile'><Profile updateUser={updateUser} /></Route>
