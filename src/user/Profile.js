@@ -1,7 +1,7 @@
 import React, { useState, useContext } from 'react';
-import UserContext from './UserContext';
-import JoblyApi from './api/api';
-import ErrorContext from './ErrorContext';
+import UserContext from '../context/UserContext';
+import JoblyApi from '../api/api';
+import ErrorContext from '../context/ErrorContext';
 
 
 const Profile = ({ updateUser }) => {

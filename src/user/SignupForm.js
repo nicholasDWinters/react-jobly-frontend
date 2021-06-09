@@ -1,7 +1,7 @@
 import React, { useContext, useState } from 'react';
 
 import './AuthForm.css';
-import ErrorContext from './ErrorContext';
+import ErrorContext from '../context/ErrorContext';
 
 const SignupForm = ({ signup }) => {
     let initial = {

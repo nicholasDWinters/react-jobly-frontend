@@ -3,15 +3,15 @@ import { Route, Redirect, Switch, useHistory } from 'react-router-dom';
 import JoblyApi from './api/api';
 import './App.css';
 import Navbar from './Navbar';
-import CompanyDetails from './CompanyDetails';
-import CompanyList from './CompanyList';
-import JobList from './JobList';
-import LoginForm from './LoginForm';
-import SignupForm from './SignupForm';
-import Profile from './Profile';
+import CompanyDetails from './companies/CompanyDetails';
+import CompanyList from './companies/CompanyList';
+import JobList from './jobs/JobList';
+import LoginForm from './user/LoginForm';
+import SignupForm from './user/SignupForm';
+import Profile from './user/Profile';
 import Home from './Home';
-import UserContext from './UserContext';
-import ErrorContext from './ErrorContext';
+import UserContext from './context/UserContext';
+import ErrorContext from './context/ErrorContext';
 import Error from './Errors';
 import jwt from 'jsonwebtoken';
 
@@ -75,6 +75,7 @@ function App() {
   function getUserFromLocalStorage() {
     // if (localStorage.user) setUser(JSON.parse(localStorage.user));
     if (localStorage.token) setToken(localStorage.token);
+
   }
 
   async function searchCompanies(name) {
@@ -102,8 +103,12 @@ function App() {
   async function apply(username, id) {
     try {
       await JoblyApi.applyToJob(username, id);
-      setApplications(...applications, id);
-      setUser(user);
+      setUser(user => ({
+        ...user,
+        applications: [...user.applications, id]
+      }));
+      setApplications(applications => ([...applications, id]));
+      localStorage.setItem('user', JSON.stringify(user));
     } catch (e) {
       setErrors(e);
     }
@@ -115,6 +120,7 @@ function App() {
     searchCompanies();
     searchJobs();
     setErrors([]);
+    console.log(token, user, companies, jobs);
   }, []);
 
   useEffect(() => {
@@ -126,6 +132,7 @@ function App() {
           let current = await JoblyApi.getCurrentUser(username);
           setUser(current);
           localStorage.setItem('user', JSON.stringify(current));
+          setApplications(current.applications);
         } catch (e) {
           setErrors(e);
           setUser(null)
@@ -133,20 +140,21 @@ function App() {
 
       }
     }
+
     findUser();
   }, [token]);
 
 
   return (
     <div className="App">
-      <UserContext.Provider value={{ user, setUser }}>
+      <UserContext.Provider value={{ user, setUser, applications }}>
         <ErrorContext.Provider value={{ errors, setErrors }}>
           <Navbar logout={logout} />
           {errors.length ? <Error error={errors} /> : ''}
           <Switch>
-            <Route exact path='/companies/:handle'><CompanyDetails apply={apply} applications={applications} /></Route>
+            <Route exact path='/companies/:handle'><CompanyDetails apply={apply} /></Route>
             <Route exact path='/companies'><CompanyList companies={companies} search={searchCompanies} /></Route>
-            <Route exact path='/jobs'><JobList jobs={jobs} search={searchJobs} apply={apply} applications={applications} /></Route>
+            <Route exact path='/jobs'><JobList jobs={jobs} search={searchJobs} apply={apply} /></Route>
             <Route exact path='/login'><LoginForm login={login} /></Route>
             <Route exact path='/signup'><SignupForm signup={signup} /></Route>
             <Route exact path='/profile'><Profile updateUser={updateUser} /></Route>

@@ -1,13 +1,13 @@
 import React, { useContext, useEffect, useState } from 'react';
 import './JobCard.css';
 import { useHistory } from 'react-router-dom';
-import UserContext from './UserContext';
+import UserContext from '../context/UserContext';
 
 
 
-const JobCard = ({ job, apply, applications }) => {
+const JobCard = ({ job, apply }) => {
     let history = useHistory();
-    let { user, setUser } = useContext(UserContext);
+    let { user, applications } = useContext(UserContext);
     let [applied, setApplied] = useState(false);
 
     function putInApplication(username, id) {
@@ -18,7 +18,8 @@ const JobCard = ({ job, apply, applications }) => {
     useEffect(() => {
 
         setApplied(applications.indexOf(job.id) !== -1);
-    }, [applications, job.id])
+
+    }, [applications, job.id]);
 
     return (
         <div className='JobCard card mb-3 bg-light' style={{ maxWidth: '600px' }}>
@@ -34,7 +35,7 @@ const JobCard = ({ job, apply, applications }) => {
                     </div>
                 </div>
                 <div className='col-md-2 btnDiv'>
-                    <button className='btn btn-danger' onClick={() => putInApplication(user.username, job.id)}>{applied ? 'Applied' : 'Apply'}</button>
+                    <button disabled={applied} className='btn btn-danger' onClick={() => putInApplication(user.username, job.id)}>{applied ? 'Applied' : 'Apply'}</button>
                 </div>
             </div>
 
