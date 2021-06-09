@@ -9,7 +9,7 @@ const CompanyCard = ({ company }) => {
         <div className='CompanyCard card mb-3 bg-light' style={{ maxWidth: '600px' }} onClick={() => history.push(url)}>
             <div className='row no-gutters'>
                 <div className='col-md-4'>
-                    <img src={`${company.logoUrl}`} alt='company logo'></img>
+                    <img className='CompanyCard-img' src='https://api.freelogodesign.org/assets/thumb/logo/23243803_400.png?t=637478931530000000' alt='company logo'></img>
                 </div>
                 <div className='col-md-8'>
                     <div className='card-body'>

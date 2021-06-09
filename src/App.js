@@ -12,7 +12,6 @@ import Profile from './user/Profile';
 import Home from './Home';
 import UserContext from './context/UserContext';
 import ErrorContext from './context/ErrorContext';
-import Error from './Errors';
 import jwt from 'jsonwebtoken';
 
 function App() {
@@ -119,8 +118,10 @@ function App() {
     getUserFromLocalStorage();
     searchCompanies();
     searchJobs();
-    setErrors([]);
-    console.log(token, user, companies, jobs);
+
+    return function cleanup() {
+      setErrors([]);
+    }
   }, []);
 
   useEffect(() => {
@@ -150,7 +151,7 @@ function App() {
       <UserContext.Provider value={{ user, setUser, applications }}>
         <ErrorContext.Provider value={{ errors, setErrors }}>
           <Navbar logout={logout} />
-          {errors.length ? <Error error={errors} /> : ''}
+          {/* {errors.length ? <Error error={errors} /> : ''} */}
           <Switch>
             <Route exact path='/companies/:handle'><CompanyDetails apply={apply} /></Route>
             <Route exact path='/companies'><CompanyList companies={companies} search={searchCompanies} /></Route>

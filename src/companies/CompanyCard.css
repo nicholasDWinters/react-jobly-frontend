@@ -8,3 +8,7 @@
 .CompanyCard :hover {
    color: blue;
 }
+
+.CompanyCard-img {
+  width: 125px;
+}

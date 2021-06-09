@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
+import ErrorContext from '../context/ErrorContext';
 import './AuthForm.css';
-
+import Error from '../Errors';
 
 const LoginForm = ({ login }) => {
     let initial = {
@@ -8,7 +9,7 @@ const LoginForm = ({ login }) => {
         password: '',
 
     }
-
+    let { errors, setErrors } = useContext(ErrorContext);
     let [data, setData] = useState(initial);
 
 
@@ -18,35 +19,38 @@ const LoginForm = ({ login }) => {
             ...data,
             [name]: value
         }))
+        setErrors([]);
     }
 
     const handleSubmit = evt => {
         evt.preventDefault();
         login(data);
-        setData(initial);
+        if (errors === '') setData(initial);
 
     };
 
 
     return (
-        <div className='mt-3 AuthForm'>
-            <form className='form' onSubmit={handleSubmit}>
-                <h2 style={{ margin: '50px' }}>Log In Form</h2>
-                <div>
-                    <input name="username" className='form-control' placeholder='username' style={{ width: '500px', marginBottom: '20px' }} type='text'
-                        value={data.username} onChange={handleChange} />
-                </div>
+        <>
+            {errors.length ? <Error error={errors} /> : ''}
+            <div className='mt-3 AuthForm'>
+                <form className='form' onSubmit={handleSubmit}>
+                    <h2 style={{ margin: '50px' }}>Log In Form</h2>
+                    <div>
+                        <input name="username" className='form-control' placeholder='username' style={{ width: '500px', marginBottom: '20px' }} type='text'
+                            value={data.username} onChange={handleChange} />
+                    </div>
 
-                <div>
-                    <input name="password" className='form-control' placeholder='password' style={{ width: '500px', marginBottom: '20px' }} type='text'
-                        value={data.password} onChange={handleChange} />
-                </div>
+                    <div>
+                        <input name="password" className='form-control' placeholder='password' style={{ width: '500px', marginBottom: '20px' }} type='text'
+                            value={data.password} onChange={handleChange} />
+                    </div>
 
-                <button type='submit' className='btn btn-success btn-lg mx-2' style={{ width: '250px' }}>Log In</button>
+                    <button type='submit' className='btn btn-success btn-lg mx-2' style={{ width: '250px' }}>Log In</button>
 
-            </form>
+                </form>
 
-        </div>
+            </div></>
     )
 }
 

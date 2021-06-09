@@ -2,9 +2,9 @@ import React from 'react';
 
 const Error = ({ error }) => {
     return (
-        <div>
-            <h5 style={{ color: 'red' }}>{error}</h5>
-        </div>
+
+        <h5 style={{ color: 'red', marginTop: '30px' }}>{error}</h5>
+
     )
 }
 

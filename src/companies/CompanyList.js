@@ -1,8 +1,7 @@
-import React, { useContext, useEffect } from 'react';
+import React from 'react';
 import CompanySearch from './CompanySearch';
 import CompanyCard from './CompanyCard';
 import { Redirect } from 'react-router-dom';
-
 
 const CompanyList = ({ companies, search }) => {
 
